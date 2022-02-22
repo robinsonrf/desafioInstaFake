@@ -77,14 +77,17 @@ const toggleFormDiv = () => {
     
 }
 
+
+
+
+
 //Funcion que verifica si existe un token en el LocalStorage y muestra el contenido en caso de existir.
-const init = async () => {
+const init = (async () => {
     const token = localStorage.getItem('jwt-token')
     if(token) {
         getPhotos(token);
     }
-}
-init()
+})();
 
 //Boton de logout
 document.getElementById('logout').addEventListener('click',() => {
@@ -92,6 +95,7 @@ document.getElementById('logout').addEventListener('click',() => {
     location.reload()
 })
 
+//MOSTRAR MAS FOTOS
 let pagina = 2
 //escucha de boton que al hacer click muestra mas posts 
 document.getElementById('mostrarbtn').addEventListener('click',async()=>{
@@ -126,5 +130,5 @@ document.getElementById('mostrarbtn').addEventListener('click',async()=>{
         if(pagina == 11) {
         document.getElementById('mostrarMas').innerHTML = "No hay mas elementos para mostrar"
         }
-    }   
-})
+    };
+});

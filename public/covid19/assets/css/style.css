@@ -1,0 +1,21 @@
+body{
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* #header{
+    background-image: url(../img/bg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 70vh;
+    position: relative;
+} */
+
+
+nav a{
+    text-decoration: none !important;
+    color: #fff !important;
+}
