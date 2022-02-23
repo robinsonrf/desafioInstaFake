@@ -1,4 +1,4 @@
-// Hito 1 - Consumir API
+// Hito 1 - Funciones para Consumir API
 const getTotal = (() => {
     const url = 'http://localhost:3000/api/total';
     try {
@@ -7,38 +7,27 @@ const getTotal = (() => {
             const data = await response.json();
             return data;
         }
-        //trae promesa pendiente.!
-        //console.log(covid());
         return covid;
     } catch (err) {
         console.log(`Error en datos: ${err}`);
     }
 })();
 
-// (()=>{
-    // getTotal();
-
-// })();
-
-//Hito 1 - OBTENER DATOS PAISES
 const getCountry = ((country) => {
     const url = `http://localhost:3000/api/countries/${country}`; // para obtener esta información debes llamar a la API http://localhost:3000/api/countries/{country} 
     try {
         const covidCountry = async () => {
             const response = await fetch(url);
             const data = await response.json();
-            //console.log(data)
             return data;
         }
-        //console.log(covidCountry())
         return covidCountry();
     } catch (err) {
         console.log(err);
     }
 });
 
-
-//**HITO 2 - LOGIN y DATOS CASOS CHILE**********
+//HITO 2 - LOGIN y DATOS CASOS SITUACION CHILE
 const apiLogin = async (email2, password2) => {
     try {
         const response = await fetch('http://localhost:3000/api/login', {
@@ -48,13 +37,14 @@ const apiLogin = async (email2, password2) => {
                 password: password2
             })
         });
-        const { token } = await response.json(); 
-        localStorage.setItem('my-token', token);
-        return token;
+        const { token } = await response.json();
+        if (token){
+            localStorage.setItem('my-token', token);
+            return token;  
+        } 
     } catch (error) {
         console.log(error);
     }
-
 }
 
 const getConfirmados = async (jwt) => {
@@ -65,13 +55,9 @@ const getConfirmados = async (jwt) => {
                 Authorization: `Bearer ${jwt}`
             }
         });
-
-        const { data } = await response.json()
-
-        return data
-
+        const { data } = await response.json();
+        return data;
     } catch (error) {
-
     }
 }
 
@@ -83,13 +69,9 @@ const getMuertos = async (jwt) => {
                 Authorization: `Bearer ${jwt}`
             }
         });
-
-        const { data } = await response.json()
-
-        return data
-
+        const { data } = await response.json();
+        return data;
     } catch (error) {
-
     }
 }
 
@@ -101,17 +83,14 @@ const getRecuperados = async (jwt) => {
                 Authorization: `Bearer ${jwt}`
             }
         });
-
-        const { data } = await response.json()
-
-        return data
-
+        const { data } = await response.json();
+        return data;
     } catch (error) {
-
     }
 }
 //*******************************************/
 
+//FUNCION PRINCIPAL HITO 1
 const casosCovid =  async () => {
     const token = localStorage.getItem('my-token');
         if(token){
@@ -120,12 +99,9 @@ const casosCovid =  async () => {
             $("#inicio").css("display", "none");
             }
     const covid = await getTotal();
-    //console.log(covid.data);
     covid.data.filter((element) => element.confirmed >= 100000).forEach((element) =>{
         let activos = {label: element.location, y: element.active};
-
         let confirmados = {label: element.location, y:element.confirmed};
-
         let muertos = {label: element.location, y: element.deaths};
 
         let recuperados= {label: element.location, y: element.recovered};
@@ -135,14 +111,7 @@ const casosCovid =  async () => {
         casosRecuperados.push(recuperados);  
     });
     
-    CanvasJS.addColorSet("greenShades",
-    [//colorSet Array
-
-    "#F94892",
-    "#FFCC1D",
-    "#AAA492",
-    "#7FC8A9"                
-    ]);
+    CanvasJS.addColorSet("greenShades", ["#F94892", "#FFCC1D", "#AAA492", "#7FC8A9"]);
 
     var chart = new CanvasJS.Chart("chartContainer", {
     animationEnabled: true,
@@ -223,7 +192,7 @@ let modalGrafico = (async (pais) => {
         ]
     });
     chart2.render();
-    //$("#exampleModal").modal("toggle");
+
 });
 covid.data.forEach((element, indice) => {
     document.getElementById("tabla").innerHTML +=`
@@ -247,31 +216,23 @@ covid.data.forEach((element, indice)=>{
 });
 
 }
-//FINAL FUNCION PRINCIPAL HITO 1
+//FINAL FUNCION PRINCIPAL HITO 1****************************//
 
-
-//Variables
+// INICIO MAIN DECLARACION Y CAPTURA DE VARIABLES
 var casosActivos = [];
 var casosConfirmados = [];
 var casosMuertos = [];
 var casosRecuperados = [];
 
-
-// INICIO
 const formulario = document.getElementById("formulario");
 const inicio = document.getElementById("inicio");
 const chile = document.getElementById("chile");
 const home = document.getElementById("home");
 const cerrar = document.getElementById("cerrar");
     
-casosCovid();
+casosCovid(); // LLAMADA A FUNCION PRINCIPAL DEL HITO 1
 
-
-//********************************************************/
-//main
-//Capturar evento click al Inicio de de Sesion
-
-
+//Capturar Diferentes eventos
 
 home.addEventListener('click', ()=>{
     $("#covid-19").css("display","none");
@@ -281,7 +242,7 @@ home.addEventListener('click', ()=>{
 })
 
 inicio.addEventListener('click', () => {
-        $('#modalLogin').modal('toggle') // hace visible el modal con el login
+        $('#modalLogin').modal('toggle'); // hace visible el modal con el login
 });
 
 cerrar.addEventListener("click", () =>{
@@ -293,8 +254,7 @@ formulario.addEventListener('submit', async (e) => {
     e.preventDefault()
     let email = formulario.email.value;
     let password = formulario.password.value;
-
-        token = await apiLogin(email, password);
+    token = await apiLogin(email, password);
 
     if (token) {   // si existe el JWT se ejecuta todo lo que esta dentro del if
         $('#modalLogin').modal('toggle'); // Oculta el modal
@@ -303,13 +263,9 @@ formulario.addEventListener('submit', async (e) => {
         chile.style.display = "block"; // hace visible el link a Situación Chile..
 
     } else if(email == "" || password == "" || !token){
-        alert("usuario o contraseña invalido")
-        localStorage.clear()
-        //location.reload(); //Reacargar Pagina
-    }
-
+        alert("usuario o contraseña invalido");
+    };
 });
-
 
 chile.addEventListener('click', async () => {
     const persistir = localStorage.getItem('my-token');
@@ -321,7 +277,7 @@ chile.addEventListener('click', async () => {
     $("#covidTotal").css("display", "none");
     $("#tablaTotal").css("display", "none");
     console.log("entramos en Situacion Chile esperar la carga de los datos de chile demora algunos segundos");
-    document.getElementById("covid-19").innerHTML =`<div class="text-center mt-5"><img src="./assets/img/loading.gif"></div>`
+    document.getElementById("covid-19").innerHTML =`<div class="text-center mt-5"><img src="./assets/img/loading.gif"></div>`;
 
     const covidConfirmados = await getConfirmados(persistir);
     const covidMuertos = await getMuertos(persistir);
@@ -360,6 +316,8 @@ chile.addEventListener('click', async () => {
         },
         legend:{
             verticalAlign: "top",
+            cursor: "pointer",
+            itemclick: toggleDataSeries
         },
         data: [{
             type: "line",
@@ -382,4 +340,13 @@ chile.addEventListener('click', async () => {
         ]
     });
     chart.render();
+    function toggleDataSeries(e) {
+        if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+            e.dataSeries.visible = false;
+        }
+        else {
+            e.dataSeries.visible = true;
+        }
+        chart.render();
+    }
 });
